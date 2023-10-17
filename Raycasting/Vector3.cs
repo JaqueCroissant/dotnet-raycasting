@@ -21,14 +21,10 @@ public class Vector3
 
     public double Length() => Math.Sqrt(LengthSquared());
 
-    public static Vector3 operator +(Vector3 v1, Vector3 v2)
-    {
-        v1.X += v2.X;
-        v1.Y += v2.Y;
-        v1.Z += v2.Z;
+    public Vector3 Unit() => this / Length();
 
-        return v1;
-    }
+    public static Vector3 operator +(Vector3 v1, Vector3 v2) =>
+        new(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
 
     public static Vector3 Reverse(Vector3 v) =>
         new (-v.X, -v.Y, -v.Z);
@@ -42,14 +38,6 @@ public class Vector3
     public static Vector3 operator *(Vector3 v, double factor) =>
         factor * v;
 
-
     public static Vector3 operator /(Vector3 v, double factor) =>
         (1.0 / factor) * v;
-}
-
-public static class Vector3Extensions
-{
-    public static Vector3 Unit(this Vector3 v) =>
-        v / v.Length();
-    
 }
