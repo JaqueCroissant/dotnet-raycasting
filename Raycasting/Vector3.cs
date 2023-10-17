@@ -23,6 +23,12 @@ public class Vector3
 
     public Vector3 Unit() => this / Length();
 
+    public double Dot() =>
+        X * X + Y * Y + Z * Z;
+
+    public double Dot(Vector3 v) => 
+        X * v.X + Y * v.Y + Z * v.Z;
+
     public static Vector3 operator +(Vector3 v1, Vector3 v2) =>
         new(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
 

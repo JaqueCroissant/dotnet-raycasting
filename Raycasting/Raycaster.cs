@@ -66,8 +66,24 @@ public class Raycaster
         output.Close();
     }
 
+    private static bool HitSphere(Vector3 center, double radius, Ray ray)
+    {
+        var oc = ray.Origin - center;
+        var a = ray.Direction.Dot();
+        var b = 2.0 * oc.Dot(ray.Direction);
+        var c = oc.Dot() - radius * radius;
+        var discriminant = b * b - 4 * a * c;
+
+        return discriminant >= 0;
+    }
+
     private static Vector3 RayColor(Ray ray)
     {
+        if(HitSphere(new Vector3(0,0,-1), 0.5, ray))
+        {
+            return new Vector3(1, 0, 0);
+        }
+
         var unitDirection = ray.Direction.Unit();
         var a = 0.5 * (unitDirection.Y + 1.0);
         return (1.0 - a) * new Vector3(1.0, 1.0, 1.0) + a * new Vector3(0.5, 0.7, 1.0);
