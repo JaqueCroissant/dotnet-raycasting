@@ -3,12 +3,16 @@
 public class Raycaster
 {
     private const double ColorMultiplier = 255.999;
-    
+    private static readonly HitableList World = new();
+
     public static void Run()
     {
+        World.Add(new Sphere(new Vector3(0, 0, -1), 0.5));
+        World.Add(new Sphere(new Vector3(0, -100.5, -1), 100));
+
         // define image specs
         double aspectRatio = 16.0 / 9.0;
-        int imageWidth = 400;
+        int imageWidth = 1200;
 
         // calculate the image height, and ensure that it's at least 1.
         var imageHeight = imageWidth / aspectRatio;
@@ -66,22 +70,11 @@ public class Raycaster
         output.Close();
     }
 
-    private static bool HitSphere(Vector3 center, double radius, Ray ray)
-    {
-        var oc = ray.Origin - center;
-        var a = ray.Direction.Dot();
-        var b = 2.0 * oc.Dot(ray.Direction);
-        var c = oc.Dot() - radius * radius;
-        var discriminant = b * b - 4 * a * c;
-
-        return discriminant >= 0;
-    }
-
     private static Vector3 RayColor(Ray ray)
     {
-        if(HitSphere(new Vector3(0,0,-1), 0.5, ray))
+        if(World.Hit(ray, 0, double.PositiveInfinity, out var hitRecord))
         {
-            return new Vector3(1, 0, 0);
+            return 0.5 * (hitRecord.Normal + new Vector3(1, 1, 1));
         }
 
         var unitDirection = ray.Direction.Unit();
