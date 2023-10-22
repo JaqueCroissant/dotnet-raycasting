@@ -11,7 +11,7 @@ public class Sphere : IHitable
         _radius = radius;
     }
 
-    public bool Hit(Ray ray, double rayMinT, double rayMaxT, out HitRecord record)
+    public bool Hit(Ray ray, Interval interval, out HitRecord record)
     {
         record = new HitRecord();
         var oc = ray.Origin - _center;
@@ -29,10 +29,10 @@ public class Sphere : IHitable
         var squaredD = Math.Sqrt(discriminant);
 
         var root = (-halfB - squaredD) / a;
-        if(root <= rayMinT || rayMaxT <= root)
+        if(!interval.Surrounds(root))
         {
             root = (-halfB + squaredD) / a;
-            if(root <= rayMinT || rayMaxT <= root) 
+            if(!interval.Surrounds(root)) 
             {
                 return false; 
             }

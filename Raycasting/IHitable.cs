@@ -2,6 +2,6 @@
 
 public interface IHitable
 {
-    bool Hit(Ray ray, double rayMinT, double rayMaxT, out HitRecord record);
+    bool Hit(Ray ray, Interval rayInterval, out HitRecord record);
 }
 
