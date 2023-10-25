@@ -22,14 +22,10 @@ public class Interval
         Min = min;
     }
         
-    public bool Contains(double x)
-    {
-        return Min <= x && x <= Max;
-    }
+    public bool Contains(double x) => Min <= x && x <= Max;
+    
+    public bool Surrounds(double x) => Min < x && x < Max;
 
-    public bool Surrounds(double x)
-    {
-        return Min < x && x < Max;
-    }
+    public double Clamp(double x) => Math.Clamp(x, Min, Max);
 }
 

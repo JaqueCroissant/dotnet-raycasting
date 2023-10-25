@@ -3,9 +3,12 @@
 public class Camera
 {
     private const double ColorMultiplier = 255.999;
+    private readonly Interval _intensity = new(0.000, 0.999);
     private readonly double _aspectRatio;
     private readonly double _imageWidth;
+    private readonly int _samplesPerPixel;
     private readonly IHitable _world;
+    private readonly Random _random;
     
     private double _imageHeight = 0;
     private Vector3 _cameraCenter = new();
@@ -13,11 +16,13 @@ public class Camera
     private Vector3 _pixelDeltaV = new();
     private Vector3 _zeroPixelsLocation = new();
 
-    public Camera(double aspectRatio, double imageWidth, IHitable world)
+    public Camera(double aspectRatio, double imageWidth, int samplesPerPixel, IHitable world)
     {
         _aspectRatio = aspectRatio;
         _imageWidth = imageWidth;
+        _samplesPerPixel = samplesPerPixel;
         _world = world;
+        _random = new Random(DateTime.Now.Microsecond);
 
         Initialize();
     }
@@ -51,6 +56,39 @@ public class Camera
         _zeroPixelsLocation = viewportUpperLeft +
             0.5 * (_pixelDeltaU + _pixelDeltaV);
     }
+    /*
+    THIS IMPLEMENTATION IS FUCKED
+    public void Render()
+    {
+        var timestamp = DateTime.Now.Ticks;
+        using StreamWriter output = new($"image-{timestamp}.ppm");
+
+        // render image
+        // P3 means that colors are in ASCII
+        // we then declare columns and rows
+        // lastly we declare the max value for a color (255)
+        output.WriteLine($"P3\n{_imageWidth} {_imageHeight}\n255");
+
+        for (var j = 0; j < _imageHeight; j++)
+        {
+            Console.WriteLine($"Scanlines remaining: {_imageHeight - j}");
+            for (var i = 0; i < _imageWidth; i++)
+            {
+                var color = new Vector3();
+
+                for(var sample = 0; sample < _samplesPerPixel; sample++)
+                {
+                    var ray = GetRay(i, j);
+                    color += RayColor(ray);
+                }
+
+                output.WriteLine(WriteColor(color));
+            }
+        }
+
+        output.Close();
+    }
+    */
 
     public void Render()
     {
@@ -83,9 +121,41 @@ public class Camera
         output.Close();
     }
 
+    private Ray GetRay(int i, int j)
+    {
+        var center = _zeroPixelsLocation
+                    + (i * _pixelDeltaU)
+                    + (j * _pixelDeltaV);
+
+        var pixelSample = center + PixelSampleSquare();
+        var direction = pixelSample - center;
+
+        return new(center, direction);
+    }
+
+    private Vector3 PixelSampleSquare()
+    {
+        var px = -0.5 + _random.NextDouble();
+        var py = -0.5 + _random.NextDouble();
+
+        return (px * _pixelDeltaU) + (py * _pixelDeltaV);
+    }
+
+    /*
+    private string WriteColor(Vector3 color)
+    {
+        var scale = 1.0 / _samplesPerPixel;
+        var red = (int)(ColorMultiplier * _intensity.Clamp(color.X * scale));
+        var green = (int)(ColorMultiplier * _intensity.Clamp(color.Y * scale));
+        var blue = (int)(ColorMultiplier * _intensity.Clamp(color.Z * scale));
+
+        return $"{red} {green} {blue}";
+    }
+    */
+    
     private static string WriteColor(Vector3 color) =>
         $"{(int)(ColorMultiplier * color.X)} {(int)(ColorMultiplier * color.Y)} {(int)(ColorMultiplier * color.Z)}";
-
+    
     private Vector3 RayColor(Ray ray)
     {
         var interval = new Interval(0, double.PositiveInfinity);

@@ -11,8 +11,9 @@ public static class Program
         // define image specs
         double aspectRatio = 16.0 / 9.0;
         int imageWidth = 1200;
+        var samplesPerPixel = 100;
 
-        var camera = new Camera(aspectRatio, imageWidth, world);
+        var camera = new Camera(aspectRatio, imageWidth, samplesPerPixel, world);
         camera.Render();
     }
 }
