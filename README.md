@@ -1,3 +1,2 @@
 # dotnet-raycasting
-Ray Tracking in one weekend project
-Following the book series https://raytracing.github.io/
+[Ray tracing in one weekend](https://raytracing.github.io/) 
